@@ -35,8 +35,8 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--repository', help='GitHub repository', required=True)
     parser.add_argument('-b', '--branch', help='The branch of the repository', required=True)
     parser.add_argument('-c', '--config', help='The configuration YAML', default='')
-    parser.add_argument('-T', '--timeout', help='Timeout (in minutes)')
-    parser.add_argument('-i', '--interval', help='Sleep interval (in seconds)')
+    parser.add_argument('-T', '--timeout', help='Timeout (in minutes)', type=int)
+    parser.add_argument('-i', '--interval', help='Sleep interval (in seconds)', type=int)
     try:
         args = parser.parse_args()
     except:

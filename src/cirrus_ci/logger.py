@@ -3,6 +3,7 @@
 import logging
 from .singleton import singleton
 
+
 @singleton
 class Logger:
 
@@ -13,13 +14,11 @@ class Logger:
             logging.ERROR: '[\033[31;1m%(levelname)s\033[0m] %(asctime)s - (%(filename)s:%(lineno)d) - %(message)s',
         }
 
-
         def format(self, record):
             format = self.FORMATS.get(record.levelno,
-                                 '[%(levelname)s] %(asctime)s - (%(filename)s:%(lineno)d) - %(message)s')
+                                      '[%(levelname)s] %(asctime)s - (%(filename)s:%(lineno)d) - %(message)s')
             formatter = logging.Formatter(format, datefmt='%Y-%m-%d %H:%M:%S')
             return formatter.format(record)
-
 
     def __init__(self):
         self.logger = logging.getLogger()
@@ -30,7 +29,6 @@ class Logger:
         handler.setFormatter(formatter)
 
         self.logger.addHandler(handler)
-
 
     def get(self) -> logging.Logger:
         return self.logger

@@ -9,6 +9,7 @@ from . import logger
 
 log = logger.Logger().get()
 
+
 class CirrusCI:
 
     def __init__(self, token, repository, branch):
@@ -17,17 +18,15 @@ class CirrusCI:
         self.branch = branch
         self.url = 'https://api.cirrus-ci.com/graphql'
 
-
     def request(self, query, variables, token=None):
         payload = {
-            'query'     : textwrap.dedent(query).strip(),
-            'variables' : variables,
+            'query': textwrap.dedent(query).strip(),
+            'variables': variables,
         }
-        headers = {} if token is None else {'Authorization' : 'Bearer {}'.format(token)}
+        headers = {} if token is None else {'Authorization': 'Bearer {}'.format(token)}
         response = requests.post(self.url, data=json.dumps(payload), headers=headers)
         response.raise_for_status()
         return response.json()
-
 
     def get_repository_id(self):
         owner, name = self.repository.split('/')
@@ -45,10 +44,10 @@ class CirrusCI:
             raise RuntimeError(response)
         return owner_repository['id']
 
-
     def create_build(self, repository_id, config=''):
         query = '''
-            mutation CreateBuild($repository_id: ID!, $branch: String!, $mutation_id: String!, $configOverride: String) {
+            mutation CreateBuild($repository_id: ID!, $branch: String!, $mutation_id: String!,
+                    $configOverride: String) {
                 createBuild(input: {
                     repositoryId: $repository_id,
                     branch: $branch,
@@ -79,13 +78,11 @@ class CirrusCI:
             raise RuntimeError('Failed to create build, status={}'.format(status))
         return build_id
 
-
     def read_config(self, config):
         if os.path.isfile(config):
             with open(config, 'r') as f:
                 return f.read()
         return ''
-
 
     def wait_build(self, build_id, timeout=None, interval=None):
         query = '''
@@ -114,11 +111,10 @@ class CirrusCI:
                 raise RuntimeError(response)
             status = build['status']
             log.info('Check the status of the build, build_id={}, status={}, elapsed={}s'.format(
-                            build_id, status, round(time.time() - start_time, 2)))
+                build_id, status, round(time.time() - start_time, 2)))
             if status not in ['CREATED', 'TRIGGERED', 'EXECUTING']:
                 return status
             time.sleep(interval)
-
 
     def get_task_ids(self, build_id):
         query = '''
@@ -136,4 +132,3 @@ class CirrusCI:
         if build is None:
             raise RuntimeError(response)
         return [task['id'] for task in build['tasks']]
-

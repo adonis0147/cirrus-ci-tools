@@ -7,6 +7,7 @@ import cirrus_ci
 
 log = cirrus_ci.Logger().get()
 
+
 def trigger(arguments):
     ci = cirrus_ci.CirrusCI(arguments.token, arguments.repository, arguments.branch)
 
@@ -29,6 +30,7 @@ def trigger(arguments):
         log.info('The url of the artifact is {}'.format(artifact_url))
         print(artifact_url)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]))
     parser.add_argument('-t', '--token', help='Cirrus-CI TOKEN', required=True)
@@ -39,9 +41,8 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--interval', help='Sleep interval (in seconds)', type=int)
     try:
         args = parser.parse_args()
-    except:
+    except Exception:
         parser.print_help()
         exit(128)
 
     trigger(args)
-

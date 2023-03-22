@@ -1,6 +1,6 @@
 # cirrus-ci-tools
 
-_**cirrus-ci-tools**_ is a tool to interact with [Cirrus CI](https://cirrus-ci.org/).
+_**Cirrus-ci-tools**_ is a tool to interact with [Cirrus CI](https://cirrus-ci.org/).
 
 For instances, it can be used to trigger a [Cirrus CI](https://cirrus-ci.org/) build task.
 

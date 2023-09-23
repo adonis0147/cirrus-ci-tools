@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+
 import cirrus_ci
 
 log = cirrus_ci.Logger().get()

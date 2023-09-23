@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
-import os.path
 import json
-import requests
+import os.path
 import textwrap
 import time
+from typing import Optional
+
+import requests
+
 from . import logger
 
 log = logger.Logger().get()
@@ -12,13 +15,13 @@ log = logger.Logger().get()
 
 class CirrusCI:
 
-    def __init__(self, token, repository, branch):
+    def __init__(self, token: str, repository: str, branch: str):
         self.token = token
         self.repository = repository
         self.branch = branch
         self.url = 'https://api.cirrus-ci.com/graphql'
 
-    def request(self, query, variables, token=None):
+    def request(self, query: str, variables: dict, token: Optional[str] = None):
         payload = {
             'query': textwrap.dedent(query).strip(),
             'variables': variables,
@@ -28,7 +31,7 @@ class CirrusCI:
         response.raise_for_status()
         return response.json()
 
-    def get_repository_id(self):
+    def get_repository_id(self) -> str:
         owner, name = self.repository.split('/')
         query = '''
             query GetRepositoryID($owner: String!, $name: String!) {
@@ -44,7 +47,7 @@ class CirrusCI:
             raise RuntimeError(response)
         return owner_repository['id']
 
-    def create_build(self, repository_id, config=''):
+    def create_build(self, repository_id: str, config: str = '') -> str:
         query = '''
             mutation CreateBuild($repository_id: ID!, $branch: String!, $mutation_id: String!,
                     $configOverride: String) {
@@ -78,13 +81,13 @@ class CirrusCI:
             raise RuntimeError('Failed to create build, status={}'.format(status))
         return build_id
 
-    def read_config(self, config):
+    def read_config(self, config: str) -> str:
         if os.path.isfile(config):
             with open(config, 'r') as f:
                 return f.read()
         return ''
 
-    def wait_build(self, build_id, timeout=None, interval=None):
+    def wait_build(self, build_id: str, timeout: Optional[int] = None, interval: Optional[int] = None):
         query = '''
             subscription QueryBuild($build_id: ID!) {
                 build(id: $build_id) {
@@ -116,7 +119,7 @@ class CirrusCI:
                 return status
             time.sleep(interval)
 
-    def get_task_ids(self, build_id):
+    def get_task_ids(self, build_id: str) -> list[str]:
         query = '''
             query QueryBuild($build_id: ID!) {
                 build(id: $build_id) {

@@ -6,8 +6,10 @@ For instances, it can be used to trigger a [Cirrus CI](https://cirrus-ci.org/) b
 
 ## Usage
 ```shell
-$ ./trigger-cirrus-ci.py --help
-usage: trigger-cirrus-ci.py [-h] -t TOKEN -r REPOSITORY -b BRANCH [-c CONFIG] [-T TIMEOUT] [-i INTERVAL]
+$ rye sync
+$ source .venv/bin/activate
+$ trigger-cirrus-ci --help
+usage: trigger-cirrus-ci [-h] -t TOKEN -r REPOSITORY -b BRANCH [-c CONFIG] [-T TIMEOUT] [-i INTERVAL]
 
 options:
   -h, --help            show this help message and exit
@@ -45,12 +47,19 @@ cirrus-ci-build:
         ref: 'cirrus'
         submodules: true
 
+    - name: Setup Rye
+      run: |
+        curl -sSf https://rye-up.com/get | RYE_INSTALL_OPTION="--yes" bash
+        source "${HOME}/.rye/env"
+        cd .github/cirrus-ci-tools
+        rye sync --no-dev
+
     - name: Build and Download
       run: |
-        trigger='.github/cirrus-ci-tools/src/trigger-cirrus-ci.py'
-        config='.github/cirrus-ci/build_toolchain.yml'
+        source .github/cirrus-ci-tools/.venv/bin/activate
 
-        urls="$(python3 "${trigger}" --token ${{ secrets.CIRRUS_CI_TOKEN }} --repository ${{ github.repository }} \
+        config='.github/cirrus-ci/build_toolchain.yml'
+        urls="$(trigger-cirrus-ci --token ${{ secrets.CIRRUS_CI_TOKEN }} --repository ${{ github.repository }} \
           --branch master --config "${config}" --timeout 240)"
 
         while read -r url; do

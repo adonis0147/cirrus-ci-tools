@@ -6,7 +6,7 @@ For instances, it can be used to trigger a [Cirrus CI](https://cirrus-ci.org/) b
 
 ## Usage
 ```shell
-$ rye sync
+$ uv sync
 $ source .venv/bin/activate
 $ trigger-cirrus-ci --help
 usage: trigger-cirrus-ci [-h] -t TOKEN -r REPOSITORY -b BRANCH [-c CONFIG] [-T TIMEOUT] [-i INTERVAL]
@@ -47,12 +47,11 @@ cirrus-ci-build:
         ref: 'cirrus'
         submodules: true
 
-    - name: Setup Rye
+    - name: Setup uv
       run: |
-        curl -sSL https://rye-up.com/get | RYE_INSTALL_OPTION="--yes" bash
-        source "${HOME}/.rye/env"
-        cd .github/cirrus-ci-tools
-        rye sync --no-dev
+        export PATH="${HOME}/.local/bin:${PATH}"
+        curl -LsSf https://astral.sh/uv/install.sh | bash
+        uv sync --no-dev
 
     - name: Build and Download
       run: |

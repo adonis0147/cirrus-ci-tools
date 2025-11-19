@@ -51,6 +51,7 @@ cirrus-ci-build:
       run: |
         export PATH="${HOME}/.local/bin:${PATH}"
         curl -LsSf https://astral.sh/uv/install.sh | bash
+        cd .github/cirrus-ci-tools
         uv sync --no-dev
 
     - name: Build and Download

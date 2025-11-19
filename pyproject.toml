@@ -1,7 +1,7 @@
 [project]
 name = "cirrus-ci-tools"
 version = "0.1.0"
-description = "Add your description here"
+description = "Tools for Cirrus CI"
 readme = "README.md"
 authors = [
     { name = "Adonis Ling", email = "adonis0147@gmail.com" }
